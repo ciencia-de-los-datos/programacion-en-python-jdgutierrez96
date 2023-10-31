@@ -8,10 +8,15 @@ No puede utilizar pandas, numpy o scipy. Se debe utilizar solo las funciones de 
 básicas.
 
 Utilice el archivo `data.csv` para resolver las preguntas.
-
-
 """
 
+import csv
+
+data = []
+with open('data.csv', 'r') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter = '\t')
+    for row in csv_reader:
+        data.append(row)
 
 def pregunta_01():
     """
@@ -21,7 +26,10 @@ def pregunta_01():
     214
 
     """
-    return
+    sum = 0
+    for row in data:
+        sum += int(row[1])
+    return sum
 
 
 def pregunta_02():
@@ -39,7 +47,13 @@ def pregunta_02():
     ]
 
     """
-    return
+    first_column = [row[0] for row in data]
+    unique_letters = list(set(first_column))
+    unique_letters.sort()
+    letter_counts = []
+    for letter in unique_letters:
+        letter_counts.append((letter, first_column.count(letter)))
+    return letter_counts
 
 
 def pregunta_03():
@@ -57,7 +71,17 @@ def pregunta_03():
     ]
 
     """
-    return
+    first_column = [row[0] for row in data]
+    unique_letters = list(set(first_column))
+    unique_letters.sort()
+    letter_sums = []
+    sums = [0 for letter in unique_letters]
+    for index, letter in enumerate(unique_letters):
+        for row in data:
+            if row[0] == letter:
+                sums[index] += int(row[1])
+        letter_sums.append((letter, sums[index]))
+    return letter_sums
 
 
 def pregunta_04():
@@ -82,7 +106,13 @@ def pregunta_04():
     ]
 
     """
-    return
+    months = [row[2].split('-')[1] for row in data]
+    unique_months = list(set(months))
+    unique_months.sort()
+    month_counts = []
+    for motnth in unique_months:
+        month_counts.append((motnth, months.count(motnth)))
+    return month_counts
 
 
 def pregunta_05():
@@ -100,7 +130,22 @@ def pregunta_05():
     ]
 
     """
-    return
+    first_column = [row[0] for row in data]
+    unique_letters = list(set(first_column))
+    unique_letters.sort()
+    letter_max_min = []
+    maxs = [float('-inf') for letter in unique_letters]
+    mins = [float('inf') for letter in unique_letters]
+    for index, letter in enumerate(unique_letters):
+        for row in data:
+            if row[0] == letter:
+                row_value = int(row[1])
+                if row_value < mins[index]:
+                    mins[index] = row_value
+                if row_value > maxs[index]:
+                    maxs[index] = row_value
+        letter_max_min.append((letter, maxs[index], mins[index]))
+    return letter_max_min
 
 
 def pregunta_06():
@@ -125,7 +170,24 @@ def pregunta_06():
     ]
 
     """
-    return
+    fifth_column = [row[4].split(',') for row in data]
+    fifth_column_flattened = [row.split(':') for row in sum(fifth_column, [])]
+    keys = [row[0] for row in fifth_column_flattened]
+    unique_keys = list(set(keys))
+    unique_keys.sort()
+    key_min_max = []
+    mins = [float('inf') for key in unique_keys]
+    maxs = [float('-inf') for key in unique_keys]
+    for index, key in enumerate(unique_keys):
+        for row in fifth_column_flattened:
+            if row[0] == key:
+                row_value = int(row[1])
+                if row_value < mins[index]:
+                    mins[index] = row_value
+                if row_value > maxs[index]:
+                    maxs[index] = row_value
+        key_min_max.append((key, mins[index], maxs[index]))
+    return key_min_max
 
 
 def pregunta_07():
@@ -149,7 +211,17 @@ def pregunta_07():
     ]
 
     """
-    return
+    values = [int(row[1]) for row in data]
+    unique_values = list(set(values))
+    unique_values.sort()
+    value_letters = []
+    letters = [[] for value in unique_values]
+    for index, value in enumerate(unique_values):
+        for row in data:
+            if int(row[1]) == value:
+                letters[index].append(row[0])
+        value_letters.append((value, letters[index]))
+    return value_letters
 
 
 def pregunta_08():
@@ -174,7 +246,19 @@ def pregunta_08():
     ]
 
     """
-    return
+    values = [int(row[1]) for row in data]
+    unique_values = list(set(values))
+    unique_values.sort()
+    value_letters = []
+    letters = [[] for value in unique_values]
+    for index, value in enumerate(unique_values):
+        for row in data:
+            if int(row[1]) == value:
+                letters[index].append(row[0])
+        unique_letters = list(set(letters[index]))
+        unique_letters.sort()
+        value_letters.append((value, unique_letters))
+    return value_letters
 
 
 def pregunta_09():
@@ -197,7 +281,15 @@ def pregunta_09():
     }
 
     """
-    return
+    fifth_column = [row[4].split(',') for row in data]
+    fifth_column_flattened = [row.split(':') for row in sum(fifth_column, [])]
+    keys = [row[0] for row in fifth_column_flattened]
+    unique_keys = list(set(keys))
+    unique_keys.sort()
+    key_counts = {}
+    for key in unique_keys:
+        key_counts[key] = keys.count(key)
+    return key_counts
 
 
 def pregunta_10():
@@ -218,7 +310,8 @@ def pregunta_10():
 
 
     """
-    return
+    letter_lens = [(row[0], len(row[3].split(',')), len(row[4].split(','))) for row in data]
+    return letter_lens
 
 
 def pregunta_11():
@@ -239,7 +332,20 @@ def pregunta_11():
 
 
     """
-    return
+    fourth_second_column_flattened = []
+    for row in data:
+        for letter in row[3].split(','):
+            fourth_second_column_flattened.append([letter, int(row[1])])
+    unique_letters = list(set([row[0] for row in fourth_second_column_flattened]))
+    unique_letters.sort()
+    letter_sums = {}
+    sums = [0 for letter in unique_letters]
+    for index, letter in enumerate(unique_letters):
+        for row in fourth_second_column_flattened:
+            if row[0] == letter:
+                sums[index] += row[1]
+        letter_sums[letter] = sums[index]
+    return letter_sums
 
 
 def pregunta_12():
@@ -257,4 +363,18 @@ def pregunta_12():
     }
 
     """
-    return
+    first_fifth_column = [[row[0], row[4].split(',')] for row in data]
+    letters_values = []
+    for row in first_fifth_column:
+        for value in row[1]:
+            letters_values.append([row[0], value.split(':')[1]])
+    unique_letters = list(set([row[0] for row in letters_values]))
+    unique_letters.sort()
+    letter_sums = {}
+    sums = [0 for letter in unique_letters]
+    for index, letter in enumerate(unique_letters):
+        for row in letters_values:
+            if row[0] == letter:
+                sums[index] += int(row[1])
+        letter_sums[letter] = sums[index]
+    return letter_sums
